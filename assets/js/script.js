@@ -18,9 +18,12 @@ function populateWeatherData(response) {
     let weatherH2 = document.createElement("h2");
     weatherH2.textContent = "Current Weather for " + response.name + " ";
     let currentWeather = document.createElement("div");
-    currentWeather.setAttribute("class", " mt-0 mb-3 border border-secondary rounded");
+    currentWeather.setAttribute("class", " mt-0 mb-3 border border-secondary rounded p-4");
+    let dayH3 = document.createElement("h3");
+    dayH3.textContent = dayjs(response.dt_txt).format("MMMM D, YYYY");
     weatherH2.append(weatherIcon);
     currentWeather.appendChild(weatherH2);
+    currentWeather.appendChild(dayH3);
     weatherDisplay.appendChild(currentWeather);
 
     let temp = document.createElement("p");
