@@ -12,6 +12,7 @@ let forecastURL;
 
 // Function to populate weather data
 function populateWeatherData(response) {
+    $(weatherDisplay).empty();
     let weatherIcon = document.createElement("img");
     weatherIcon.setAttribute("src", "http://openweathermap.org/img/wn/" + response.weather[0].icon + "@2x.png");
     let weatherH2 = document.createElement("h2");
@@ -33,8 +34,42 @@ function populateWeatherData(response) {
 
 // Function to populate forecast data
 function populateForecastData(response) {
-    console.log(response);
+    let forecast = document.createElement("div");
+    let forecastH3 = document.createElement("h3");
+    forecastH3.textContent = "5-Day Forecast:"
+    let forecastDetails = document.createElement("div");
+    forecastDetails.setAttribute("class", "d-flex justify-content-between")
+    forecast.appendChild(forecastH3);
+    forecast.appendChild(forecastDetails);
+    weatherDisplay.appendChild(forecast);
 
+    for (let i = 0; i < 5; i++) {
+        let day = document.createElement("div");
+        day.setAttribute("class", "p-3 text-white");
+        day.style.width = "16%";
+        day.style.backgroundColor = "var(--bs-primary-text)";
+        let dayH4 = document.createElement("h4");
+        dayH4.setAttribute("class", "text-white");
+        dayH4.textContent = dayjs(response.list[i * 8 + 1].dt_text).format("MMMM D, YYYY");
+        let weatherIcon = document.createElement("img");
+        weatherIcon.setAttribute("src", "http://openweathermap.org/img/wn/" + response.list[i * 8 + 1].weather[0].icon + "@2x.png")
+        let temp = document.createElement("p");
+        temp.style.color = "white";
+        temp.textContent = "Temp: " + response.list[i * 8 + 1].main.temp + " F";
+        let wind = document.createElement("p");
+        wind.style.color = "white";
+        wind.textContent = "Wind: " + response.list[i * 8 + 1].wind.speed + " mph";
+        let humidity = document.createElement("p");
+        humidity.style.color = "white";
+        humidity.textContent = "Humidity: " + response.list[i * 8 + 1].main.humidity + "%";
+
+        day.appendChild(dayH4);
+        day.appendChild(weatherIcon);
+        day.appendChild(temp);
+        day.appendChild(wind);
+        day.appendChild(humidity);
+        forecastDetails.appendChild(day);
+    }
 }
 
 // Function to populate history buttons
@@ -99,7 +134,7 @@ function getWeather(response) {
     let cityInHist = false;
     if (history) {
         for (let i = 0; i < history.length; i++) {
-            if (history[0].name === response[0].name) {
+            if (history[i].name === response[0].name) {
                 cityInHist = true;
                 break;
             }
@@ -113,7 +148,7 @@ function getWeather(response) {
         };
 
         if (history) {
-            if (history.length > 10) {
+            if (history.length >= 10) {
                 history.pop();
             }
             history.reverse();
@@ -138,7 +173,7 @@ function getWeather(response) {
     $.ajax({
         url: weatherURL,
         method: "GET"
-    }).then(function(response) {
+    }).then(function (response) {
         populateWeatherData(response);
     })
 
@@ -147,7 +182,7 @@ function getWeather(response) {
         url: forecastURL,
         method: "GET"
         //.then callback function to populate weather data
-    }).then(function(response) {
+    }).then(function (response) {
         populateForecastData(response);
     })
 
@@ -169,6 +204,7 @@ function handleSubmit(event) {
     } else {
         // Function call to build geocoding URL
         buildGeoURL(city);
+        searchField.value = "";
 
         // Function call to geocode the city
         geocodeCity();
@@ -176,41 +212,63 @@ function handleSubmit(event) {
 }
 
 // Function to handle click of history button
+function handleHistoryClick(event) {
+    // Prevent default behavior
+    event.preventDefault();
+
+    // Store button data in variables
+    let city = event.target.textContent;
+    let lat = event.target.getAttribute("data-lat");
+    let lon = event.target.getAttribute("data-lon");
+
+    // Update history
+    let index;
+    for (let i = 0; i < history.length; i++) {
+        if (history[i].name === city) {
+            index = i;
+            break;
+        }
+    }
+    history.splice(index, 1);
+    let newCity = {
+        "name": city,
+        "lat": lat,
+        "lon": lon
+    };
+
+    history.reverse();
+    history.push(newCity);
+    history.reverse();
+
+    // Stringify history and save it to local storage
+    localStorage.setItem("history", JSON.stringify(history));
+
+    // Function call to populate history buttons
+    populateHist();
+
+    // Build weather and forecast URLs
+    let coordinates = [lat, lon];
+    buildWeatherURL(coordinates);
+    buildForecastURL(coordinates);
+
+    // AJAX call to the current weather API
+    $.ajax({
+        url: weatherURL,
+        method: "GET"
+    }).then(function (response) {
+        populateWeatherData(response);
+    })
+
+    // AJAX call to the forecast API
+    $.ajax({
+        url: forecastURL,
+        method: "GET"
+        //.then callback function to populate weather data
+    }).then(function (response) {
+        populateForecastData(response);
+    })
+}
 
 // Event listeners for form submission and history buttons
 $("form").on("submit", handleSubmit);
-
-/*Code Drill
-$.ajax({
-  url: geocodingUrl,
-  method: "GET"
-}).then(function(response) {
-
-  var coordinates = response;
-  $(".city").text("City: " + coordinates[0]["name"]);
-  lat = coordinates[0].lat;
-  lon = coordinates[0].lon;
-  apiUrl = "https://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon + "&units=imperial&appid=" + apiKey;
-
-  $.ajax({
-    url: apiUrl,
-    method: "GET"
-  }).then(function(response) {
-    var weather = response;
-    console.log(weather);
-
-    //Log the data in HTML
-    $(".wind").append("<p>");
-    $(".wind").children().eq(0).text("Wind Direction: " + weather.wind.deg + " degrees");
-    $(".wind").append("<p>");
-    $(".wind").children().eq(1).text("Gust: " + weather.wind.gust);
-    $(".wind").append("<p>");
-    $(".wind").children().eq(2).text("Speed: " + weather.wind.speed);
-    
-    $(".humidity").text("Humidity: " + weather.main.humidity);
-
-    $(".temp").text("Temperature: " + weather.main.temp + " degrees Farenheit");
-    $(".temp").append("<p>");
-  })
-});
-*/
+$(historyDiv).on("click", handleHistoryClick);
