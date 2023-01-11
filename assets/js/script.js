@@ -99,7 +99,7 @@ populateHist();
 
 // Function to assemble geocoding URL
 function buildGeoURL(city) {
-    geocodingURL = "http://api.openweathermap.org/geo/1.0/direct?q=" + city + "&limit=1&appid=" + apiKey;
+    geocodingURL = "https://api.openweathermap.org/geo/1.0/direct?q=" + city + "&limit=1&appid=" + apiKey;
 }
 
 // Function to parse coordinates from geocoding response
