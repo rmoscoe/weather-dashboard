@@ -34,7 +34,7 @@ To use the dashboard, simply enter the name of a city in the search field or cli
 
 ## Learning Points 
 
-### By completing this project, I got very comfortable using **third-party APIs**, including the ability to glean necessary information from the APIs' documentation. In addition, I improved the following skills:
+By completing this project, I got very comfortable using **third-party APIs**, including the ability to glean necessary information from the APIs' documentation. In addition, I improved the following skills:
 * Bootstrap
 * jQuery
 
