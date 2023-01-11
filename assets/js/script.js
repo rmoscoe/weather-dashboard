@@ -1,6 +1,6 @@
 // Global variables to hold element selectors, history array, and API URL segments
 const searchForm = document.querySelector("form");
-const searchField = document.querySelector("input");
+const searchField = document.getElementById("search");
 const historyDiv = document.getElementById("history-container");
 const weatherDisplay = document.getElementById("content-right");
 const modal = document.getElementById("invalid-search");
@@ -10,7 +10,7 @@ let geocodingURL;
 let weatherURL;
 
 // Function to populate weather data
-function populateWeatherData (response) {
+function populateWeatherData(response) {
     console.log(response);
 }
 
@@ -18,14 +18,16 @@ function populateWeatherData (response) {
 function populateHist() {
     $(historyDiv).empty();
     history = JSON.parse(localStorage.getItem("history"));
-    for (let i = 0; i < history.length; i++) {
-        let newButton = document.createElement("button");
-        newButton.setAttribute("class", "btn btn-secondary btn-block");
-        newButton.setAttribute("type", "button");
-        newButton.setAttribute("data-lat", history[i].lat);
-        newButton.setAttribute("data-lon", history[i].lon);
-        newButton.textContent = history[i].name;
-        historyDiv.appendChild(newButton);
+    if (history) {
+        for (let i = 0; i < history.length; i++) {
+            let newButton = document.createElement("button");
+            newButton.setAttribute("class", "btn btn-secondary btn-block");
+            newButton.setAttribute("type", "button");
+            newButton.setAttribute("data-lat", history[i].lat);
+            newButton.setAttribute("data-lon", history[i].lon);
+            newButton.textContent = history[i].name;
+            historyDiv.appendChild(newButton);
+        }
     }
 }
 
@@ -63,7 +65,7 @@ function getWeather(response) {
 
     // Iterate through history. If the current city is not in history, add it. If the length of history > 10, remove the oldest element.
     let cityInHist = false;
-    for (let i = 0; i < history.length, i++) {
+    for (let i = 0; i < history.length; i++) {
         if (history[0].name === response.city.name) {
             cityInHist = true;
             break;
@@ -108,11 +110,12 @@ function handleSubmit(event) {
     event.preventDefault();
 
     // Store the city in a variable
-    let city = searchField.value().trim();
+    let city = searchField.value.trim();
 
     // Validate submission value
     if (city === "") {
         $(modal).modal("show");
+        $(".close-modal").on("click", function(){$(modal).modal("hide")});
         return;
     } else {
         // Function call to build geocoding URL
@@ -126,7 +129,7 @@ function handleSubmit(event) {
 // Function to handle click of history button
 
 // Event listeners for form submission and history buttons
-$(searchForm).on("submit", handleSubmit);
+$("form").on("submit", handleSubmit);
 
 /*Code Drill
 $.ajax({
