@@ -3,12 +3,16 @@ const searchForm = document.querySelector("form");
 const searchField = document.querySelector("input");
 const historyDiv = document.getElementById("history-container");
 const weatherDisplay = document.getElementById("content-right");
+const modal = document.getElementById("invalid-search");
 let history = [];
 const apiKey = "e92cd274e40c97a9b0115834d3205232";
 let geocodingURL;
 let weatherURL;
 
 // Function to populate weather data
+function populateWeatherData (response) {
+    console.log(response);
+}
 
 // Function to populate history buttons
 function populateHist() {
@@ -101,20 +105,28 @@ function getWeather(response) {
 // Function to handle submit event
 function handleSubmit(event) {
     // Prevent default behavior
-
-    // Validate submission value
+    event.preventDefault();
 
     // Store the city in a variable
+    let city = searchField.value().trim();
 
-    // Function call to build geocoding URL
+    // Validate submission value
+    if (city === "") {
+        $(modal).modal("show");
+        return;
+    } else {
+        // Function call to build geocoding URL
+        buildGeoURL(city);
 
-    // Function call to geocode the city
-
+        // Function call to geocode the city
+        geocodeCity();
+    }
 }
 
 // Function to handle click of history button
 
 // Event listeners for form submission and history buttons
+$(searchForm).on("submit", handleSubmit);
 
 /*Code Drill
 $.ajax({
