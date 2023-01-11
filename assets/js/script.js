@@ -11,9 +11,20 @@ let weatherURL;
 // Function to populate weather data
 
 // Function to populate history buttons
-
+function populateHist () {
+    $(historyDiv).empty();
+    history = localStorage.getItem("history");
+    for (let i = 0; i < history.length; i++) {
+        let newButton = document.createElement("button");
+        newButton.setAttribute("class", "btn btn-secondary btn-block");
+        newButton.setAttribute("type", "button");
+        newButton.textContent = history[i];
+        historyDiv.appendChild(newButton);
+    }
+}
 
 // Function call to populate history buttons when the page loads
+populateHist();
 
 // Function to assemble geocoding URL
 
