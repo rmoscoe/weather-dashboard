@@ -27,8 +27,14 @@ function populateHist () {
 populateHist();
 
 // Function to assemble geocoding URL
+function buildGeoURL (city) {
+    geocodingURL = "http://api.openweathermap.org/geo/1.0/direct?q=" + city + "&limit=1&appid=" + apiKey;
+}
 
 // Function to parse coordinates from geocoding response
+function getCoordinates (response) {
+    return [response[0].lat, response[0].lon];
+}
 
 // Function to create weather URL
 
@@ -39,8 +45,7 @@ populateHist();
 // Event listeners for form submission and history buttons
 
 /*Code Drill
-// Create an AJAX call to retrieve data Log the data in console
-var geocodingUrl = "http://api.openweathermap.org/geo/1.0/direct?q=Bujumbura,108&limit=1&appid=" + apiKey;
+
 var lat;
 var lon;
 
