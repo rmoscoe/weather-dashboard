@@ -17,11 +17,13 @@ function populateWeatherData(response) {
 // Function to populate history buttons
 function populateHist() {
     $(historyDiv).empty();
-    history = JSON.parse(localStorage.getItem("history"));
+    if (JSON.parse(localStorage.getItem("history"))) {
+        history = JSON.parse(localStorage.getItem("history"));
+    }
     if (history) {
         for (let i = 0; i < history.length; i++) {
             let newButton = document.createElement("button");
-            newButton.setAttribute("class", "btn btn-secondary btn-block");
+            newButton.setAttribute("class", "btn btn-secondary btn-block w-100 mb-2");
             newButton.setAttribute("type", "button");
             newButton.setAttribute("data-lat", history[i].lat);
             newButton.setAttribute("data-lon", history[i].lon);
@@ -55,7 +57,9 @@ function geocodeCity() {
         url: geocodingURL,
         method: "GET"
         // .then callback function getWeather()
-    }).then(getWeather(response));
+    }).then(function (response) {
+        getWeather(response);
+    })
 }
 
 // Function to get weather data
@@ -65,24 +69,28 @@ function getWeather(response) {
 
     // Iterate through history. If the current city is not in history, add it. If the length of history > 10, remove the oldest element.
     let cityInHist = false;
-    for (let i = 0; i < history.length; i++) {
-        if (history[0].name === response.city.name) {
-            cityInHist = true;
-            break;
+    if (history) {
+        for (let i = 0; i < history.length; i++) {
+            if (history[0].name === response[0].name) {
+                cityInHist = true;
+                break;
+            }
         }
     }
     if (!cityInHist) {
         let newCity = {
-            name: response.city.name,
-            lat: coordinates[0],
-            lon: coordinates[1]
+            "name": response[0].name,
+            "lat": coordinates[0],
+            "lon": coordinates[1]
         };
 
-        if (history.length > 10) {
-            history.pop();
+        if (history) {
+            if (history.length > 10) {
+                history.pop();
+            }
+            history.reverse();
         }
-        history.reverse();
-        history.pushState(newCity);
+        history.push(newCity);
         history.reverse();
     }
 
@@ -115,7 +123,7 @@ function handleSubmit(event) {
     // Validate submission value
     if (city === "") {
         $(modal).modal("show");
-        $(".close-modal").on("click", function(){$(modal).modal("hide")});
+        $(".close-modal").on("click", function () { $(modal).modal("hide") });
         return;
     } else {
         // Function call to build geocoding URL
