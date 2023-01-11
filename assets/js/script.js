@@ -8,10 +8,33 @@ let history = [];
 const apiKey = "e92cd274e40c97a9b0115834d3205232";
 let geocodingURL;
 let weatherURL;
+let forecastURL;
 
 // Function to populate weather data
 function populateWeatherData(response) {
+    let weatherIcon = document.createElement("img");
+    weatherIcon.setAttribute("src", "http://openweathermap.org/img/wn/" + response.weather[0].icon + "@2x.png");
+    let weatherH2 = document.createElement("h2");
+    weatherH2.textContent = "Current Weather for " + response.name + " ";
+    let currentWeather = document.createElement("div");
+    currentWeather.setAttribute("class", " mt-0 mb-3 border border-secondary rounded");
+    weatherH2.append(weatherIcon);
+    currentWeather.appendChild(weatherH2);
+    weatherDisplay.appendChild(currentWeather);
+
+    let temp = document.createElement("p");
+    temp.textContent = "Current Temperature: " + response.main.temp + " F";
+    let wind = document.createElement("p");
+    wind.textContent = "Wind: " + response.wind.speed + " mph";
+    let humidity = document.createElement("p");
+    humidity.textContent = "Humidity: " + response.main.humidity + "%";
+    currentWeather.append(temp, wind, humidity);
+}
+
+// Function to populate forecast data
+function populateForecastData(response) {
     console.log(response);
+
 }
 
 // Function to populate history buttons
@@ -46,9 +69,14 @@ function getCoordinates(response) {
     return [response[0].lat, response[0].lon];
 }
 
-// Function to create weather URL
+// Function to create current weather URL
 function buildWeatherURL(coordinates) {
     weatherURL = "https://api.openweathermap.org/data/2.5/weather?lat=" + coordinates[0] + "&lon=" + coordinates[1] + "&units=imperial&appid=" + apiKey;
+}
+
+// Function to create forecast URL
+function buildForecastURL(coordinates) {
+    forecastURL = "https://api.openweathermap.org/data/2.5/forecast?lat=" + coordinates[0] + "&lon=" + coordinates[1] + "&units=imperial&appid=" + apiKey;
 }
 
 // Function to geocode city with an AJAX call to the geocoding API
@@ -100,15 +128,28 @@ function getWeather(response) {
     // Function call to populate history buttons
     populateHist();
 
-    // Function call to build weather URL
+    // Function call to build forecast URL
+    buildForecastURL(coordinates);
+
+    // Function call to build current weather URL
     buildWeatherURL(coordinates);
 
-    // AJAX call to the weather API
+    // AJAX call to the current weather API
     $.ajax({
         url: weatherURL,
         method: "GET"
+    }).then(function(response) {
+        populateWeatherData(response);
+    })
+
+    // AJAX call to the forecast API
+    $.ajax({
+        url: forecastURL,
+        method: "GET"
         //.then callback function to populate weather data
-    }).then(populateWeatherData(response));
+    }).then(function(response) {
+        populateForecastData(response);
+    })
 
 }
 
