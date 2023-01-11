@@ -50,7 +50,7 @@ function populateForecastData(response) {
         day.style.backgroundColor = "var(--bs-primary-text)";
         let dayH4 = document.createElement("h4");
         dayH4.setAttribute("class", "text-white");
-        dayH4.textContent = dayjs(response.list[i * 8 + 1].dt_text).format("MMMM D, YYYY");
+        dayH4.textContent = dayjs(response.list[i * 8 + 1].dt_txt).format("MMMM D, YYYY");
         let weatherIcon = document.createElement("img");
         weatherIcon.setAttribute("src", "http://openweathermap.org/img/wn/" + response.list[i * 8 + 1].weather[0].icon + "@2x.png")
         let temp = document.createElement("p");
