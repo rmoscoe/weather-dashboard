@@ -37,6 +37,9 @@ function getCoordinates (response) {
 }
 
 // Function to create weather URL
+function buildWeatherURL (coordinates) {
+    weatherURL = "https://api.openweathermap.org/data/2.5/weather?lat=" + coordinates[0] + "&lon=" + coordinates[1] + "&units=imperial&appid=" + apiKey;
+}
 
 // Function to handle submit event with an AJAX call to the geocoding API
 
@@ -45,10 +48,6 @@ function getCoordinates (response) {
 // Event listeners for form submission and history buttons
 
 /*Code Drill
-
-var lat;
-var lon;
-
 $.ajax({
   url: geocodingUrl,
   method: "GET"
