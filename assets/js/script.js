@@ -14,7 +14,7 @@ let forecastURL;
 function populateWeatherData(response) {
     $(weatherDisplay).empty();
     let weatherIcon = document.createElement("img");
-    weatherIcon.setAttribute("src", "http://openweathermap.org/img/wn/" + response.weather[0].icon + "@2x.png");
+    weatherIcon.setAttribute("src", "https://openweathermap.org/img/wn/" + response.weather[0].icon + "@2x.png");
     let weatherH2 = document.createElement("h2");
     weatherH2.textContent = "Current Weather for " + response.name + " ";
     let currentWeather = document.createElement("div");
@@ -55,7 +55,7 @@ function populateForecastData(response) {
         dayH4.setAttribute("class", "text-white");
         dayH4.textContent = dayjs(response.list[i * 8 + 1].dt_txt).format("MMMM D, YYYY");
         let weatherIcon = document.createElement("img");
-        weatherIcon.setAttribute("src", "http://openweathermap.org/img/wn/" + response.list[i * 8 + 1].weather[0].icon + "@2x.png")
+        weatherIcon.setAttribute("src", "https://openweathermap.org/img/wn/" + response.list[i * 8 + 1].weather[0].icon + "@2x.png")
         let temp = document.createElement("p");
         temp.style.color = "white";
         temp.textContent = "Temp: " + response.list[i * 8 + 1].main.temp + " F";
